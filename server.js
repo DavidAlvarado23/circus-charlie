@@ -2,6 +2,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const scores = [];
+const PORT = process.env.PORT || 8080;
 
 const mimeLookup = {
   ".js": "application/javascript",
@@ -74,6 +75,6 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(8080, () => {
+server.listen(PORT, () => {
   console.log("Listening to port 8080");
 });
