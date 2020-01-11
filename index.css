@@ -1,0 +1,128 @@
+body {
+  background-color: black;
+}
+.container {
+  overflow: hidden;
+  position: relative;
+  height: 80%;
+  width: 80%;
+  min-height: 400px;
+  margin: auto;
+  margin-top: 20px;
+  background-color: black;
+  background-image: url("assets/background.png");
+  background-size: 600px;
+  background-repeat: repeat-x;
+  background-position: 100% 100%;
+  padding-top: 70px;
+}
+
+@keyframes animatedBackground {
+  from {
+    background-position: 100% 100%;
+  }
+  to {
+    background-position: -1000% 100%;
+  }
+}
+
+.scoreboard {
+  position: relative;
+  width: 90%;
+  margin: auto;
+  border: solid 5px #de095d;
+  border-radius: 10px;
+  color: white;
+  font-family: "Press Start 2P", cursive;
+  top: 5px;
+}
+
+.score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 2;
+}
+
+.playerImage {
+  max-height: 70px;
+  max-width: 70px;
+}
+
+.playerImageStand {
+  max-height: 75px;
+  max-width: 75px;
+}
+
+.newObstacle {
+  position: absolute;
+  /* height: 10px; */
+  width: 10px;
+  bottom: 7px;
+  display: flex;
+  min-height: 100px;
+  flex-direction: row;
+}
+
+.newObstacleImageBack {
+  max-height: 175px;
+  max-width: 100px;
+  z-index: 1;
+}
+
+.newObstacleImageFront {
+  max-height: 175px;
+  max-width: 100px;
+  z-index: 3;
+  position: relative;
+  left: -55px;
+}
+
+.newBonus {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  bottom: 7px;
+}
+
+.title {
+  color: white;
+  font-family: "Press Start 2P", cursive;
+  width: 50%;
+  display: block;
+  white-space: pre;
+  text-align: center;
+  margin: auto;
+  text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
+  margin-top: -60px;
+}
+
+.logoImage {
+  display: block;
+  margin: auto;
+  height: 100px;
+}
+
+.nameInput {
+  color: white;
+  font-family: "Press Start 2P", cursive;
+  background-color: black;
+  width: 100%;
+  text-align: center;
+  font-size: 1em;
+}
+
+.seeScores {
+  color: white;
+  font-family: "Press Start 2P", cursive;
+  background-color: black;
+  border-radius: 10px;
+  height: 30px;
+  cursor: pointer;
+}
