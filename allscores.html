@@ -60,9 +60,10 @@
     </div>
     <script>
       const container = document.querySelector(".container");
+      const SERVER_URL = "http://circus-charlie.herokuapp.com";
 
       window.onload = async () => {
-        const scores = await fetch("http://localhost:8080/scores");
+        const scores = await fetch(`${SERVER_URL}/scores`);
         const parsedScores = await scores.json();
 
         parsedScores
@@ -87,7 +88,7 @@
       };
 
       const backToGame = () => {
-        window.open("http://localhost:8080", "_self");
+        window.open(SERVER_URL, "_self");
       };
     </script>
   </body>

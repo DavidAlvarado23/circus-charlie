@@ -7,6 +7,7 @@ const scoreboard = document.querySelector(".scoreboard");
 const score = document.querySelector(".score");
 const playerImageJumping = document.querySelector(".playerImage");
 const playerImageStand = document.querySelector(".playerImageStand");
+const SERVER_URL = "http://circus-charlie.herokuapp.com";
 
 const PLAYER_SPEED = 10;
 const OBSTACLES_SPEED = 10;
@@ -354,7 +355,7 @@ const setStartGameScreen = async () => {
 
   const buttonToScores = document.createElement("button");
   buttonToScores.onclick = () => {
-    window.open("http://localhost:8080/allscores.html", "_self");
+    window.open(`${SERVER_URL}/allscores.html`, "_self");
   };
   buttonToScores.innerHTML = "See scores";
   buttonToScores.setAttribute("class", "seeScores");
@@ -365,7 +366,7 @@ const setStartGameScreen = async () => {
   titleHeader.appendChild(initialTitle);
   titleHeader.appendChild(buttonToScores);
 
-  const highScore = await fetch("http://localhost:8080/highscore");
+  const highScore = await fetch(`${SERVER_URL}/highscore`);
   if (highScore.status === 200) {
     const parsedHighScore = await highScore.json();
 
@@ -405,7 +406,7 @@ const setGameOverScreen = () => {
   nameInput.setAttribute("placeholder", "Write your name and hit 'enter'");
   nameInput.onkeydown = async ({ code }) => {
     if (code === "Enter") {
-      await fetch("http://localhost:8080", {
+      await fetch(SERVER_URL, {
         method: "PUT",
         body: JSON.stringify({
           score: playerActualScore,
