@@ -13,12 +13,9 @@ const PLAYER_SPEED = 10;
 const OBSTACLES_SPEED = 10;
 const BONUSES_SPEED = 10;
 const JUMP_MAX_HIGH = 6;
-let OBSTACLE_CREATION_PROBABILITY = 0.5;
 const BONUS_CREATION_PROBABILITY = 0.9;
-
-window.onload = async () => {
-  setStartGameScreen();
-};
+let OBSTACLE_CREATION_PROBABILITY = 0.5;
+let playerActualScore = 0;
 
 const initialState = {
   playerPosition: {
@@ -34,38 +31,7 @@ const initialState = {
   stage: 1
 };
 
-const calculateScore = (bonuses, obstacles, playerPosition, lastScore) => {
-  const { x, y } = playerPosition;
-
-  return bonuses.some(bonus => bonus.x === x && y === 10)
-    ? lastScore + 10
-    : obstacles.some(obstable => obstable.x === x && y !== 10)
-    ? lastScore + 100
-    : lastScore;
-};
-
-const removeAndMove = (array, distanceToMove) => {
-  return array
-    .filter(item => item.x > 0)
-    .map(item => ({
-      ...item,
-      x: item.x - distanceToMove
-    }));
-};
-
-const removeInTouchAndMove = (array, playerPosition, distanceToMove) => {
-  const { x, y } = playerPosition;
-  const touchedIndex = array.findIndex(item => item.x === x && y === 10);
-
-  return removeAndMove(
-    touchedIndex >= 0
-      ? [...array.slice(0, touchedIndex), ...array.slice(touchedIndex + 1)]
-      : array,
-    distanceToMove
-  );
-};
-
-function updateState(state = initialState, action) {
+const updateState = (state = initialState, action) => {
   switch (action.type) {
     case "JUMP":
       return !state.jumping
@@ -74,7 +40,7 @@ function updateState(state = initialState, action) {
             jumping: true,
             timeJumping: 1,
             playerPosition: {
-              x: state.playerPosition.x,
+              ...state.playerPosition,
               y: state.playerPosition.y + PLAYER_SPEED
             }
           }
@@ -126,7 +92,6 @@ function updateState(state = initialState, action) {
           }
         : {
             ...state,
-
             timeJumping: 0,
             jumping: false,
             obstacles: removeAndMove(state.obstacles, OBSTACLES_SPEED),
@@ -185,8 +150,7 @@ function updateState(state = initialState, action) {
     case "ADD_LEVEL":
       return {
         ...state,
-        stage: state.stage + 1,
-        generateMoreObstacles: state.stage > 2
+        stage: state.stage + 1
       };
     case "SET_HIGHSCORE":
       return {
@@ -201,11 +165,13 @@ function updateState(state = initialState, action) {
     default:
       return state;
   }
-}
+};
 
 const store = redux.createStore(updateState);
-let lastObstaclesLength = 0;
-let playerActualScore = 0;
+
+window.onload = async () => {
+  setStartGameScreen();
+};
 
 store.subscribe(() => {
   const {
@@ -285,22 +251,21 @@ const bonusGeneratorFn = () => {
   store.dispatch({ type: "GENERATE_BONUS" });
 };
 
-let timeInterval = null;
-let obstacleGeneratorInterval = null;
-let bonusGeneratorInterval = null;
-
 const difficultyFn = () => {
   OBSTACLE_CREATION_PROBABILITY -= 0.1;
   store.dispatch({ type: "ADD_LEVEL" });
 };
 
+let timeInterval = null;
+let obstacleGeneratorInterval = null;
+let bonusGeneratorInterval = null;
 let difficultyInteval = setInterval(difficultyFn, 30000);
 
 document.addEventListener("keydown", ({ code, target }) => {
   const targetName = target.tagName.toUpperCase();
 
   if (
-    (code === "KeyS" || code === "KeyR") &&
+    code === "KeyS" &&
     timeInterval === null &&
     obstacleGeneratorInterval === null &&
     bonusGeneratorInterval === null &&
@@ -329,13 +294,6 @@ document.addEventListener("keydown", ({ code, target }) => {
     }
   }
 });
-
-const removeElementsByClass = className => {
-  var elements = document.getElementsByClassName(className);
-  while (elements.length > 0) {
-    elements[0].parentNode.removeChild(elements[0]);
-  }
-};
 
 const setStartGameScreen = async () => {
   clearInterval(timeInterval);
@@ -366,22 +324,14 @@ const setStartGameScreen = async () => {
   titleHeader.appendChild(initialTitle);
   titleHeader.appendChild(buttonToScores);
 
-  const highScore = await fetch(`${SERVER_URL}/highscore`);
-  if (highScore.status === 200) {
-    const parsedHighScore = await highScore.json();
-
-    store.dispatch({
-      type: "SET_HIGHSCORE",
-      payload: { highScore: parsedHighScore.score }
-    });
-  }
+  await fetchHighScore();
 };
 
 const setGameScreen = () => {
   timeInterval = setInterval(timeFn, 50);
   obstacleGeneratorInterval = setInterval(obstableGeneratorFn, 1000);
   bonusGeneratorInterval = setInterval(bonusGeneratorFn, 1500);
-  titleHeader.innerHTML = "Press 'space' to jump";
+  titleHeader.innerHTML = "Press 'space' to jump and the 'arrows' to move";
   store.dispatch({ type: "START" });
   container.style.animation = "animatedBackground 40s linear infinite";
   titleHeader.style.paddingTop = "8%";
@@ -406,16 +356,7 @@ const setGameOverScreen = () => {
   nameInput.setAttribute("placeholder", "Write your name and hit 'enter'");
   nameInput.onkeydown = async ({ code }) => {
     if (code === "Enter") {
-      await fetch(SERVER_URL, {
-        method: "PUT",
-        body: JSON.stringify({
-          score: playerActualScore,
-          name: nameInput.value
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+      await putPlayerScore(playerActualScore, nameInput.value);
       setStartGameScreen();
     }
   };
@@ -424,4 +365,29 @@ const setGameOverScreen = () => {
 
   container.style.animation = null;
   music.pause();
+};
+
+const putPlayerScore = async (playerActualScore, name) => {
+  await fetch(SERVER_URL, {
+    method: "PUT",
+    body: JSON.stringify({
+      score: playerActualScore,
+      name: name
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+};
+
+const fetchHighScore = async () => {
+  const highScore = await fetch(`${SERVER_URL}/highscore`);
+  if (highScore.status === 200) {
+    const parsedHighScore = await highScore.json();
+
+    store.dispatch({
+      type: "SET_HIGHSCORE",
+      payload: { highScore: parsedHighScore.score }
+    });
+  }
 };

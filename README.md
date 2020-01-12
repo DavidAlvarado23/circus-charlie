@@ -14,7 +14,7 @@ La entrega del proyecto consta de:
 - El despliegue del proyecto en algún servidor accesible públicamente. Por ejemplo, utilizando [glitch](glitch.com). Aseguraos de incluir la URL del servidor en el archivo `meta.md`.
 - La demostración durante las clases dispuestas para seminarios tutoriales del funcionamiento del proyecto.
 
-El _pull request_ y el despliegue para la entrega del ejercicio debe realizarse __antes__ del día doce de enero.
+El _pull request_ y el despliegue para la entrega del ejercicio debe realizarse **antes** del mediodía del día trece de enero.
 
 ## Tecnologías
 
@@ -38,7 +38,7 @@ Cinco (5) puntos si el juego incluye las siguientes características:
 
 Seis (6) puntos si, **además**, incluye algún otro tipo de interacción con un servidor creado por vosotros. Por ejemplo, persistencia de puntuación u obtención de datos para el funcionamiento del juego.
 
-Siete (7) puntos si, **además**, incluye elementos que se desplazan en la interfaz gráfica.
+Siete (7) puntos si, **además**, incluye elementos que se desplazan en la interfaz gráfica. El desplazamiento debe realizarse manipulando el elemento HTML desplazado (ya sea modificando sus atributos, modificando los estilos que se le aplican o eliminándolo para crearlo de nuevo en otra posición).
 
 Hasta diez (10) puntos si, **además**, incluye otros elementos implementados con tecnologías web que aumenten la dificultad del trabajo. Por ejemplo, uso de otras APIs de navegador, elementos estéticos, etc.
 
